@@ -2,44 +2,45 @@ import { useParams, useNavigate } from "react-router-dom";
 import { BaseNavPage } from "../../shared/components/BaseNavPage";
 import { InputField } from "../../shared/components/InputField";
 import { useRef, useState } from "react";
-import PlanosService from "../../shared/services/PlanosService"; // Ajuste o caminho conforme necessário
-import { PlanoModel } from "../../shared/models/PlanoModel"; // Ajuste o caminho conforme necessário
+import { AlunoModel } from "../../shared/models/AlunoModel";
+import AlunosService from "../../shared/services/AlunosService";
 
-export const PlanoForm = () => {
+
+interface FormErrors { nome?: string; email?: string; telefone?: string; plano?: string }
+
+export const AlunoForm = () => {
     let { id } = useParams();
-    const title = id? 'Editar plano' : 'Novo plano';
+    const title = id? 'Editar aluno' : 'Novo aluno';
 
     const navigate = useNavigate();
 
     const nomePlanoRef = useRef<HTMLInputElement>(null);
-    const valorRef = useRef<HTMLInputElement>(null);
+    const emailRef = useRef<HTMLInputElement>(null);
+    const telefoneRef = useRef<HTMLInputElement>(null);
+    const planoRef = useRef<HTMLSelectElement>(null);
 
-    const [errors, setErrors] = useState<{ nome?: string; valor?: string }>({});
+    const [errors, setErrors] = useState<FormErrors>({});
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        
+
         // Limpa erros anteriores
         setErrors({});
         setSuccessMessage(null);
 
         // Obtém valores dos inputs
         const nome = nomePlanoRef.current?.value || '';
-        const valor = valorRef.current?.value || '';
+        const email = emailRef.current?.value || '';
+        const telefone = telefoneRef.current?.value || '';
+        const plano = planoRef.current?.value || '';
 
         let hasErrors = false;
-        const newErrors: { nome?: string; valor?: string } = {};
+        const newErrors: FormErrors = {};
 
         // Validação do nome
         if (nome.length < 3) {
             newErrors.nome = 'O nome deve ter pelo menos 3 caracteres.';
-            hasErrors = true;
-        }
-
-        // Validação do valor
-        if (isNaN(Number(valor)) || Number(valor) <= 0) {
-            newErrors.valor = 'O valor deve ser maior que 0.';
             hasErrors = true;
         }
 
@@ -49,17 +50,19 @@ export const PlanoForm = () => {
         }
 
         // Criação do novo plano
-        const newPlano: Omit<PlanoModel, 'id'> = {
-            nomePlano: nome,
-            valor: Number(valor),
+        const newAluno: Omit<AlunoModel, 'id'> = {
+            nome: nome,
+            email: email,
+            telefone: telefone,
+            plano_id: plano,
         };
 
         try {
-            await PlanosService.create(newPlano);
-            setSuccessMessage('Plano adicionado com sucesso!');
-            navigate('/planos');
+            await AlunosService.create(newAluno);
+            setSuccessMessage('Aluno adicionado com sucesso!');
+            navigate('/alunos');
         } catch (error) {
-            setErrors({ nome: 'Erro ao adicionar o plano. Tente novamente.' });
+            setErrors({ nome: 'Erro ao adicionar o aluno. Tente novamente.' });
         }
     };
 
@@ -78,13 +81,29 @@ export const PlanoForm = () => {
                     />
 
                     <InputField
-                        label="Valor"
-                        name="valor"
-                        type="number"
-                        step={0.01}
-                        ref={valorRef}
-                        error={errors.valor}
+                        label="Email"
+                        name="email"
+                        type="email"
+                        ref={emailRef}
+                        error={errors.email}
                     />
+
+                    <InputField
+                        label="Telefone"
+                        name="telefone"
+                        step={0.01}
+                        ref={telefoneRef}
+                        error={errors.telefone}
+                    />
+
+                    <div className="mb-3">
+                        <label htmlFor="plano" className="font-bold text-left block mb-1">Plano</label>
+                        <select ref={planoRef} id="plano" className="duration-100 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-whit">
+                            <option value="">1</option>
+                            <option value="">2</option>
+                        </select>
+                        {errors.plano && <p className="text-red-500 text-sm mt-1">{errors.plano}</p>}
+                    </div>
 
                     <button
                         className="px-6 py-2 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50"

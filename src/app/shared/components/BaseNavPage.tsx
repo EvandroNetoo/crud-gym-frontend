@@ -17,9 +17,9 @@ export const BaseNavPage = () => {
 
     return (
         <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6 mb-6">
-            <div className="flex items-center flex-shrink-0 text-white mr-6">
+            <Link to="/" className="flex items-center flex-shrink-0 text-white mr-6 hover:scale-110 duration-100">
                 <span className="font-semibold text-xl tracking-tight">GYM</span>
-            </div>
+            </Link>
             <div className="block md:hidden">
                 <button
                     onClick={toggleMenu}
@@ -39,7 +39,7 @@ export const BaseNavPage = () => {
                     <Link to="/alunos" className={linkClasses('/alunos')}>
                         Alunos
                     </Link>
-                    <Link to="/treinos" className={linkClasses('/treinos')}>
+                    <Link to="/fichas-treino" className={linkClasses('/treinos')}>
                         Treinos
                     </Link>
                 </div>

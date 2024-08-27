@@ -5,12 +5,10 @@ import { useRef, useState } from "react";
 import PlanosService from "../../shared/services/PlanosService"; // Ajuste o caminho conforme necessário
 import { PlanoModel } from "../../shared/models/PlanoModel"; // Ajuste o caminho conforme necessário
 
-export const PlanoForm = () => {
+export const FichaTreinoForm = () => {
     let { id } = useParams();
-    const title = id? 'Editar plano' : 'Novo plano';
-
     const navigate = useNavigate();
-
+    const title = id === 'add' ? 'Novo aluno' : 'Editar aluno';
     const nomePlanoRef = useRef<HTMLInputElement>(null);
     const valorRef = useRef<HTMLInputElement>(null);
 
@@ -19,7 +17,7 @@ export const PlanoForm = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        
+
         // Limpa erros anteriores
         setErrors({});
         setSuccessMessage(null);
@@ -71,20 +69,24 @@ export const PlanoForm = () => {
                     <p className="text-3xl font-medium mb-3 text-center">{title}</p>
 
                     <InputField
-                        label="Nome"
-                        name="nome"
+                        label="Data"
+                        name="data"
                         ref={nomePlanoRef}
                         error={errors.nome}
                     />
 
-                    <InputField
-                        label="Valor"
-                        name="valor"
-                        type="number"
-                        step={0.01}
-                        ref={valorRef}
-                        error={errors.valor}
-                    />
+                    <div className="mb-3">
+                        <label htmlFor="descricao" className="font-bold text-left block mb-1">Descrição</label>
+                        <textarea id="descricao" rows={2} className="duration-100 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-whit"></textarea>
+                    </div>
+
+                    <div className="mb-3">
+                        <label htmlFor="plano" className="font-bold text-left block mb-1">Aluno</label>
+                        <select id="plano" className="duration-100 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-whit">
+                            <option value="">1</option>
+                            <option value="">2</option>
+                        </select>
+                    </div>
 
                     <button
                         className="px-6 py-2 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50"

@@ -32,7 +32,7 @@ export const HomePage = () => {
             <div className='flex flex-col items-center space-y-10'>
                 <HomeLink to="/planos" title="Planos" svg={money} />
                 <HomeLink to="/alunos" title="Alunos" svg={user} />
-                <HomeLink to="/treinos" title="Treinos" svg={dumbell} />
+                <HomeLink to="/fichas-treino" title="Treinos" svg={dumbell} />
             </div>
         </div>
 
