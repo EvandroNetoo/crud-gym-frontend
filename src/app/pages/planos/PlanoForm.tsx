@@ -1,13 +1,23 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { BaseNavPage } from "../../shared/components/BaseNavPage";
 import { InputField } from "../../shared/components/InputField";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PlanosService from "../../shared/services/PlanosService"; // Ajuste o caminho conforme necessário
 import { PlanoModel } from "../../shared/models/PlanoModel"; // Ajuste o caminho conforme necessário
 
 export const PlanoForm = () => {
     let { id } = useParams();
-    const title = id? 'Editar plano' : 'Novo plano';
+    const [plano, setPlano] = useState<PlanoModel>()
+
+    const fetchPlano = async () => {
+        setPlano(await PlanosService.getById(id || ''))
+    }
+    useEffect(() => {
+        fetchPlano();
+    }, []);
+
+
+    const title = id ? 'Editar plano' : 'Novo plano';
 
     const navigate = useNavigate();
 
@@ -15,14 +25,12 @@ export const PlanoForm = () => {
     const valorRef = useRef<HTMLInputElement>(null);
 
     const [errors, setErrors] = useState<{ nome?: string; valor?: string }>({});
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        
+
         // Limpa erros anteriores
         setErrors({});
-        setSuccessMessage(null);
 
         // Obtém valores dos inputs
         const nome = nomePlanoRef.current?.value || '';
@@ -48,18 +56,26 @@ export const PlanoForm = () => {
             return;
         }
 
-        // Criação do novo plano
-        const newPlano: Omit<PlanoModel, 'id'> = {
+        const Plano: Omit<PlanoModel, 'id'> = {
             nomePlano: nome,
             valor: Number(valor),
         };
 
-        try {
-            await PlanosService.create(newPlano);
-            setSuccessMessage('Plano adicionado com sucesso!');
-            navigate('/planos');
-        } catch (error) {
-            setErrors({ nome: 'Erro ao adicionar o plano. Tente novamente.' });
+        if (!id) {
+            try {
+
+                await PlanosService.create(Plano);
+                navigate('/planos');
+            } catch (error) {
+                setErrors({ nome: 'Erro ao adicionar o plano. Tente novamente.' });
+            }
+        } else {
+            try {
+                await PlanosService.update(id, Plano);
+                navigate('/planos');
+            } catch (error) {
+                setErrors({ nome: 'Erro ao adicionar o plano. Tente novamente.' });
+            }
         }
     };
 
@@ -75,6 +91,7 @@ export const PlanoForm = () => {
                         name="nome"
                         ref={nomePlanoRef}
                         error={errors.nome}
+                        defaultValue={plano?.nomePlano || ''}
                     />
 
                     <InputField
@@ -84,6 +101,7 @@ export const PlanoForm = () => {
                         step={0.01}
                         ref={valorRef}
                         error={errors.valor}
+                        defaultValue={plano?.valor || ''}
                     />
 
                     <button
@@ -92,8 +110,6 @@ export const PlanoForm = () => {
                     >
                         Salvar
                     </button>
-
-                    {successMessage && <p className="text-green-500 mt-2">{successMessage}</p>}
                 </div>
             </div>
         </>

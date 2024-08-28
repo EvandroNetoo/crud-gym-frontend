@@ -39,7 +39,7 @@ export const BaseNavPage = () => {
                     <Link to="/alunos" className={linkClasses('/alunos')}>
                         Alunos
                     </Link>
-                    <Link to="/fichas-treino" className={linkClasses('/treinos')}>
+                    <Link to="/fichas-treino" className={linkClasses('/fichas-treino')}>
                         Treinos
                     </Link>
                 </div>

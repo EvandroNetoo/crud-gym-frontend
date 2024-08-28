@@ -3,5 +3,5 @@ export interface AlunoModel {
     nome: string;
     email: string;
     telefone: string;
-    plano_id: string;
+    planoId: string;
 }

@@ -1,9 +1,33 @@
 import { Link } from "react-router-dom";
 import { BaseNavPage } from "../../shared/components/BaseNavPage";
-
+import { AlunoModel } from "../../shared/models/AlunoModel";
+import { useEffect, useState } from "react";
+import AlunosService from "../../shared/services/AlunosService";
+import trash from "../../shared/assets/trash.svg"
+import pencil from "../../shared/assets/pencil.svg"
 
 export const AlunosList = () => {
+    const [alunos, setAlunos] = useState<AlunoModel[]>([])
+    const [errorMessage, setErrorMessage] = useState('');
 
+    const fetchData = async () => {
+        const data = await AlunosService.getAll();
+        setAlunos(data);
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const handleDeleteAluno = async (aluno_id: string) => {
+        setErrorMessage('')
+        try {
+            await AlunosService.delete(aluno_id);
+            fetchData()
+        } catch {
+            setErrorMessage('Não foi possível excluir o aluno.')
+        }
+    }
 
     return (
         <>
@@ -19,8 +43,39 @@ export const AlunosList = () => {
                         Add Aluno
                     </Link>
                 </div>
-            </div>
 
+                {errorMessage ? <p className="text-red-500 mb-3">{errorMessage}</p> : ''}
+
+                <table className="min-w-full bg-transparent border-0">
+                    <thead>
+                        <tr className="bg-green-300">
+                            <th className="px-4 py-2 border-b text-left">NOME</th>
+                            <th className="px-4 py-2 border-b text-left">EMAIL</th>
+                            <th className="px-4 py-2 border-b text-left">TELEFONE</th>
+                            <th className="px-4 py-2 border-b">AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {alunos.map(aluno => (
+                            <tr key={aluno.id} className="hover:bg-green-200 duration-100 border-green-500 border-y-2">
+                                <td className="px-4 py-2 border-b">{aluno.nome}</td>
+                                <td className="px-4 py-2 border-b">{aluno.email}</td>
+                                <td className="px-4 py-2 border-b">{aluno.telefone}</td>
+
+                                <td className="px-4 py-2 border-b text-center flex space-x-2 justify-center">
+                                    <Link to={`/alunos/${aluno.id}`} className="text-indigo-600 hover:underline">
+                                        <img src={pencil} width={20} />
+                                    </Link>
+                                    <button onClick={() => handleDeleteAluno(aluno.id)}>
+                                        <img src={trash} width={20} />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+            </div>
         </>
     );
 };

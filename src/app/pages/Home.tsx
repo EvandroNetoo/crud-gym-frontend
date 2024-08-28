@@ -14,7 +14,7 @@ interface CardProps {
 
 const HomeLink: React.FC<CardProps> = ({ to, title, svg }) => {
     return (
-        <Link to={to} className="flex justify-center items-center relative w-80 h-40 bg-green-400 rounded-3xl overflow-hidden cursor-pointer">
+        <Link to={to} className="flex justify-center items-center relative w-80 h-40 bg-green-400 hover:bg-green-500 duration-100 rounded-3xl overflow-hidden cursor-pointer">
             <div className="absolute inset-0 flex space-x-4 justify-center items-center transition-transform duration-150 hover:scale-125">
                 <p className="text-5xl font-bold">{title}</p>
 
